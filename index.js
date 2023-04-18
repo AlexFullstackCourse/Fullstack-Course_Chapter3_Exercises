@@ -84,20 +84,10 @@ app.post("/api/persons", (request, response) => {
     });
   }*/
 
-  /** Delete when the new functionality is working */
-  /*
-  const person = {
-    id: Math.floor(Math.random() * 1000),
-    name: body.name,
-    number: body.number,
-  };*/
-
   const person = new Person({
     name: body.name,
     number: body.number,
   });
-
-  // persons = persons.concat(person);
 
   person.save().then((savedPerson) => {
     response.json(savedPerson);
