@@ -76,20 +76,32 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
+  /** Not required for the current task. Leave for later. */
+  /*
   if (!!persons.find((person) => person.name === body.name)) {
     return response.status(400).json({
       error: "Name must be unique",
     });
-  }
+  }*/
 
+  /** Delete when the new functionality is working */
+  /*
   const person = {
     id: Math.floor(Math.random() * 1000),
     name: body.name,
     number: body.number,
-  };
+  };*/
 
-  persons = persons.concat(person);
-  response.json(person);
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+
+  // persons = persons.concat(person);
+
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 app.delete("/api/persons/:id", (request, response) => {
