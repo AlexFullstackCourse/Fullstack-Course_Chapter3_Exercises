@@ -10,7 +10,7 @@ if (numberOfCmdLineArgs < 3) {
 } else {
   const password = process.argv[2];
 
-  const url = `mongodb+srv://alexanderheidorn:${password}@cluster0.h6hnwap.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `mongodb+srv://alexanderheidorn:${password}@cluster0.h6hnwap.mongodb.net/Phonebook?retryWrites=true&w=majority`;
 
   mongoose.set("strictQuery", false);
   mongoose.connect(url);
