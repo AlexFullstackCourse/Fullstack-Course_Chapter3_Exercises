@@ -1,10 +1,19 @@
 const express = require("express");
+const app = express();
 require("dotenv").config();
 var morgan = require("morgan");
 const cors = require("cors");
 const Person = require("./models/personDB");
 
-const app = express();
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "Malformed ID" });
+  }
+  next(error);
+};
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static("build"));
@@ -18,8 +27,8 @@ app.use(
     ":method :url :status :res[content-length] - :response-time ms :post_content"
   )
 );
-
-let persons = [
+/** Can be deleted after implementing the unique name functionality */
+/*let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -40,7 +49,7 @@ let persons = [
     name: "Mary Poppendieck",
     number: "39-23-6423122",
   },
-];
+];*/
 
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((person) => {
@@ -48,23 +57,26 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/info", (request, response) => {
   const timestamp = new Date();
-  response.send(
-    `<div>Phonebook has information about ${persons.length} people</div>
-    <p>${timestamp.toString()}</p>`
-  );
+  Person.estimatedDocumentCount().then((result) => {
+    response.send(
+      `<div>Phonebook has information about ${result} people</div>
+      <p>${timestamp.toString()}</p>`
+    );
+  });
 });
 
 app.post("/api/persons", (request, response) => {
@@ -94,12 +106,30 @@ app.post("/api/persons", (request, response) => {
   });
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
 
-  response.status(204).end();
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch((error) => next(error));
 });
+
+app.delete("/api/persons/:id", (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
+});
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
