@@ -9,7 +9,7 @@ console.log("Connecting to", uri);
 
 mongoose
   .connect(uri)
-  .then((result) => {
+  .then(() => {
     console.log("Connected to MongoDB");
   })
   .catch((error) => {
@@ -28,7 +28,8 @@ const personSchema = new mongoose.Schema({
       validator: (v) => {
         return v.length > 8 && /\b([0-9]{2}|[0-9]{3})-[0-9]+$/.test(v);
       },
-      message: `Must be 8 digits or more, consist only of digits and be of the form xx-xxxxxx... or xxx-xxxxxx... !`,
+      message:
+        "Must be 8 digits or more, consist only of digits and be of the form xx-xxxxxx... or xxx-xxxxxx... !",
     },
     required: true,
   },

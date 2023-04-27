@@ -22,7 +22,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("build"));
 
-morgan.token("post_content", (request, response) => {
+morgan.token("post_content", (request) => {
   return JSON.stringify(request.body);
 });
 
@@ -128,7 +128,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
