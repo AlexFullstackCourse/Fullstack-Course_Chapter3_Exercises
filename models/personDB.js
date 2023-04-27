@@ -17,8 +17,21 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
+  number: {
+    type: String,
+    validate: {
+      validator: (v) => {
+        return v.length > 8 && /\b([0-9]{2}|[0-9]{3})-[0-9]+$/.test(v);
+      },
+      message: `Must be 8 digits or more, consist only of digits and be of the form xx-xxxxxx... or xxx-xxxxxx... !`,
+    },
+    required: true,
+  },
 });
 
 personSchema.set("toJSON", {
