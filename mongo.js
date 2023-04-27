@@ -31,7 +31,7 @@ if (numberOfCmdLineArgs < 3) {
       number: newNumber,
     });
 
-    person.save().then((result) => {
+    person.save().then(() => {
       console.log(
         `Added ${newName} with phone number ${newNumber} to phonebook!`
       );

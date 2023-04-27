@@ -14,5 +14,10 @@ module.exports = {
     "linebreak-style": ["error", "windows"],
     quotes: ["error", "double"],
     semi: ["error", "always"],
+    eqeqeq: "error",
+    "no-console": 0,
+    "arrow-spacing": ["error", { before: true, after: true }],
+    "no-trailing-spaces": "error",
+    "object-curly-spacing": ["error", "always"],
   },
 };
